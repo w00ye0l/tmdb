@@ -26,4 +26,9 @@ public class MovieController {
     public MovieWrapper popularMovie() {
         return movieService.getPopularMovie();
     }
+
+    @GetMapping("/now-playing")
+    public MovieWrapper nowPlayingMovie() {
+        return movieService.getNowPlayingMovie();
+    }
 }

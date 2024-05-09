@@ -8,4 +8,6 @@ public interface MovieService {
     GenresWrapper getGenre();
 
     MovieWrapper getPopularMovie();
+
+    MovieWrapper getNowPlayingMovie();
 }

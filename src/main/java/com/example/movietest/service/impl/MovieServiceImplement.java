@@ -1,6 +1,7 @@
 package com.example.movietest.service.impl;
 
 import com.example.movietest.entity.GenresWrapper;
+import com.example.movietest.entity.Movie;
 import com.example.movietest.entity.MovieWrapper;
 import com.example.movietest.repository.GenreRepository;
 import com.example.movietest.repository.MovieRepository;
@@ -13,6 +14,7 @@ import okhttp3.Response;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @JsonView
@@ -110,6 +112,65 @@ public class MovieServiceImplement implements MovieService {
                         movieRepository.saveAll(popularMovies.getResults());
 
                         return popularMovies;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    System.out.println("Request failed with status: " + response.code());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (response != null) {
+                    response.close(); // 자원 해제
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public MovieWrapper getNowPlayingMovie() {
+        OkHttpClient client = new OkHttpClient();
+
+        Response response = null;
+
+        // 1페이지만 일단 조회
+        for (int i = 1; i < 2; i++) {
+            try {
+
+                Request request = new Request.Builder()
+                        .url("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=" + i)
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZmM4MjY2Nzg0NWIwOWMxYzM3YmQxNjZhYmQwYzgxMiIsInN1YiI6IjYyZGQwMjkxZWE4NGM3MDA0Y2RiYTczNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Nqz24p3GBP1aBLFIf7nrsCmvIbK7CUnCjYADaUWcVHY")
+                        .build();
+
+                response = client.newCall(request).execute();
+
+                // 응답 성공 확인
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string(); // 응답 데이터를 문자열로 변환
+                    response.body().close(); // 자원 해제
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+
+                    try {
+                        MovieWrapper nowPlayingMovies = objectMapper.readValue(responseData, MovieWrapper.class);
+
+                        List<Movie> movies = nowPlayingMovies.getResults();
+
+                        for (Movie movie : movies) {
+                            Long id = movie.getId();
+
+                            if (!movieRepository.existsById(id)) {
+                                // save와 다르게 실시간으로 DB 반영
+                                movieRepository.saveAndFlush(movie);
+                            }
+                        }
+
+                        return nowPlayingMovies;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

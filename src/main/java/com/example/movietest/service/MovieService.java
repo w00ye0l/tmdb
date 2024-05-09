@@ -5,7 +5,7 @@ import com.example.movietest.entity.MovieWrapper;
 
 public interface MovieService {
 
-    public GenresWrapper getGenre();
+    GenresWrapper getGenre();
 
-    public MovieWrapper getPopularMovie();
+    MovieWrapper getPopularMovie();
 }

@@ -1,5 +1,6 @@
 package com.example.movietest.service;
 
+import com.example.movietest.dto.MovieDetailDTO;
 import com.example.movietest.dto.MovieSearchDTO;
 import com.example.movietest.entity.GenresWrapper;
 import com.example.movietest.entity.MovieWrapper;
@@ -15,4 +16,6 @@ public interface MovieService {
     MovieWrapper getNowPlayingMovie();
 
     List<MovieSearchDTO> getSearchedMovies(String keyword);
+
+    MovieDetailDTO getMovieDetail(Long movieId);
 }

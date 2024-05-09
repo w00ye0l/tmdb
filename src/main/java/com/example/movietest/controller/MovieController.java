@@ -1,13 +1,11 @@
 package com.example.movietest.controller;
 
+import com.example.movietest.dto.MovieDetailDTO;
 import com.example.movietest.dto.MovieSearchDTO;
 import com.example.movietest.entity.GenresWrapper;
 import com.example.movietest.entity.MovieWrapper;
 import com.example.movietest.service.MovieService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +39,10 @@ public class MovieController {
         System.out.println("keyword = " + keyword);
 
         return movieService.getSearchedMovies(keyword);
+    }
+
+    @GetMapping("/{id}")
+    public MovieDetailDTO getMovie(@PathVariable Long movieId) {
+        return movieService.getMovieDetail(movieId);
     }
 }

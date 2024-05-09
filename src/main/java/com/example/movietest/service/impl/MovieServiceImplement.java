@@ -1,6 +1,8 @@
 package com.example.movietest.service.impl;
 
+import com.example.movietest.dto.MovieDetailDTO;
 import com.example.movietest.dto.MovieSearchDTO;
+import com.example.movietest.entity.Genre;
 import com.example.movietest.entity.GenresWrapper;
 import com.example.movietest.entity.Movie;
 import com.example.movietest.entity.MovieWrapper;
@@ -204,6 +206,7 @@ public class MovieServiceImplement implements MovieService {
      * 영화 검색 서비스,
      * 영화 제목에 키워드를 통해서 검색
      *
+     * @param keyword
      * @return List[MovieSearchDTO]
      */
     public List<MovieSearchDTO> getSearchedMovies(String keyword) {
@@ -223,5 +226,43 @@ public class MovieServiceImplement implements MovieService {
         }
 
         return searchedMovies;
+    }
+
+    /**
+     * 영화 상세 정보 조회 서비스,
+     * PathVariable로 영화 id를 입력받아서 영화 정보 조회,
+     * id로 저장된 장르도 문자열로 변환 후 반환
+     *
+     * @param movieId
+     * @return
+     */
+    public MovieDetailDTO getMovieDetail(Long movieId) {
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+
+        if (movie == null) {
+            return null;
+        }
+
+        MovieDetailDTO movieDetailDTO = new MovieDetailDTO();
+
+        movieDetailDTO.setId(movie.getId());
+        movieDetailDTO.setTitle(movie.getTitle());
+
+        // 장르 id로 name 가져와서 List로 만드는 과정
+        List<String> genres = new ArrayList<>();
+        for (Long id : movie.getGenre_ids()) {
+            Genre genre = genreRepository.findById(id).orElse(null);
+
+            if (genre != null) {
+                genres.add(genre.getName());
+            }
+        }
+        movieDetailDTO.setGenres(genres);
+
+        movieDetailDTO.setRelease_date(movie.getRelease_date());
+        movieDetailDTO.setPoster_path(movie.getPoster_path());
+        movieDetailDTO.setOverview(movie.getOverview());
+
+        return movieDetailDTO;
     }
 }

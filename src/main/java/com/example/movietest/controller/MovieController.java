@@ -1,11 +1,15 @@
 package com.example.movietest.controller;
 
+import com.example.movietest.dto.MovieSearchDTO;
 import com.example.movietest.entity.GenresWrapper;
 import com.example.movietest.entity.MovieWrapper;
 import com.example.movietest.service.MovieService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/movie")
@@ -30,5 +34,12 @@ public class MovieController {
     @GetMapping("/now-playing")
     public MovieWrapper nowPlayingMovie() {
         return movieService.getNowPlayingMovie();
+    }
+
+    @GetMapping("/search")
+    public List<MovieSearchDTO> searchMovies(@RequestParam String keyword) {
+        System.out.println("keyword = " + keyword);
+
+        return movieService.getSearchedMovies(keyword);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.movietest.service.impl;
 
+import com.example.movietest.dto.MovieSearchDTO;
 import com.example.movietest.entity.GenresWrapper;
 import com.example.movietest.entity.Movie;
 import com.example.movietest.entity.MovieWrapper;
@@ -14,6 +15,7 @@ import okhttp3.Response;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -79,7 +81,7 @@ public class MovieServiceImplement implements MovieService {
      * 페이지를 반복문을 통해서 조회,
      * 영화 리스트를 DB에 저장
      *
-     * @return List[PopularMovie]
+     * @return List[Movie]
      */
     public MovieWrapper getPopularMovie() {
         OkHttpClient client = new OkHttpClient();
@@ -131,6 +133,13 @@ public class MovieServiceImplement implements MovieService {
         return null;
     }
 
+    /**
+     * TMDB API를 통해서 현재 상영 중인 영화 리스트를 가져오는 서비스,
+     * 페이지를 반복문을 통해서 조회,
+     * 영화 리스트를 DB에 저장
+     *
+     * @return List[Movie]
+     */
     public MovieWrapper getNowPlayingMovie() {
         OkHttpClient client = new OkHttpClient();
 
@@ -188,5 +197,31 @@ public class MovieServiceImplement implements MovieService {
         }
 
         return null;
+    }
+
+
+    /**
+     * 영화 검색 서비스,
+     * 영화 제목에 키워드를 통해서 검색
+     *
+     * @return List[MovieSearchDTO]
+     */
+    public List<MovieSearchDTO> getSearchedMovies(String keyword) {
+
+        List<Movie> findMovies = movieRepository.findAllByTitleContaining(keyword);
+        List<MovieSearchDTO> searchedMovies = new ArrayList<>();
+
+        for (Movie movie : findMovies) {
+            System.out.println("movie = " + movie.getId());
+            MovieSearchDTO movieSearchDTO = new MovieSearchDTO();
+
+            movieSearchDTO.setId(movie.getId());
+            movieSearchDTO.setTitle(movie.getTitle());
+            movieSearchDTO.setRelease_date(movie.getRelease_date());
+
+            searchedMovies.add(movieSearchDTO);
+        }
+
+        return searchedMovies;
     }
 }

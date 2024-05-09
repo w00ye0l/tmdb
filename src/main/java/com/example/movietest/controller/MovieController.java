@@ -41,7 +41,7 @@ public class MovieController {
         return movieService.getSearchedMovies(keyword);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{movieId}")
     public MovieDetailDTO getMovie(@PathVariable Long movieId) {
         return movieService.getMovieDetail(movieId);
     }
